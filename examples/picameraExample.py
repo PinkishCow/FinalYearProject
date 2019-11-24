@@ -20,6 +20,7 @@ for frame in camera.capture_continuous(raw, format="bgr", use_video_port=True):
 
     cv2.imshow("camera", image_flipped)
     raw.truncate()
+    raw.seek(0)
     if cv2.waitKey(20) & 0xFF == ord('q'):
         break
 
