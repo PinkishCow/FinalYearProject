@@ -4,6 +4,8 @@ from picamera.array import PiRGBArray
 import time
 import tools.config
 
+# In the future, call this with a function and then do said function on each image maybe?
+
 
 def run_cam_example():
 
