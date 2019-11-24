@@ -19,6 +19,7 @@ for frame in camera.capture_continuous(raw, format="bgr", use_video_port=True):
     image_flipped = cv2.warpAffine(image, M, (width, height))
 
     cv2.imshow("camera", image_flipped)
+    raw.truncate()
     if cv2.waitKey(20) & 0xFF == ord('q'):
         break
 
