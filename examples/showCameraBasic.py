@@ -1,30 +1,32 @@
 import cv2
 
-cap = cv2.VideoCapture(0)
 
+def run_basic_cam_example():
 
-print("Width: '{}'".format(cv2.CAP_PROP_FRAME_WIDTH))
-print("Height: '{}'".format(cv2.CAP_PROP_FRAME_HEIGHT))
-print("FPS: '{}'".format(cv2.CAP_PROP_FPS))
+    cap = cv2.VideoCapture(0)
 
-if not cap.isOpened():
-    print("Could not open the camera feed")
+    print("Width: '{}'".format(cv2.CAP_PROP_FRAME_WIDTH))
+    print("Height: '{}'".format(cv2.CAP_PROP_FRAME_HEIGHT))
+    print("FPS: '{}'".format(cv2.CAP_PROP_FPS))
 
-while cap.isOpened():
-    ret, frame = cap.read()
+    if not cap.isOpened():
+        print("Could not open the camera feed")
 
-    if ret:
-        height, width = frame.shape[:2]
-        M = cv2.getRotationMatrix2D((width/2, height/2), 180, 1)
-        frame = cv2.warpAffine(frame, M, (width, height))
-        cv2.imshow("camera", frame)
+    while cap.isOpened():
+        ret, frame = cap.read()
 
-        cv2.imshow("Grayscale cam", cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
+        if ret:
+            height, width = frame.shape[:2]
+            M = cv2.getRotationMatrix2D((width/2, height/2), 180, 1)
+            frame = cv2.warpAffine(frame, M, (width, height))
+            cv2.imshow("camera", frame)
 
-        if cv2.waitKey(20) & 0xFF == ord('q'):
+            cv2.imshow("Grayscale cam", cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
+
+            if cv2.waitKey(20) & 0xFF == ord('q'):
+                break
+        else:
             break
-    else:
-        break
-cap.release()
-cv2.destroyAllWindows()
+    cap.release()
+    cv2.destroyAllWindows()
 

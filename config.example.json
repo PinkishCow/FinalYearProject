@@ -2,7 +2,12 @@
   "windows":{
 
   },
-  "linux": {
-
+  "pi": {
+    "camera": {
+      "width": 1296,
+      "height": 972,
+      "fps": 42,
+      "exposure": 0
+    }
   }
 }
