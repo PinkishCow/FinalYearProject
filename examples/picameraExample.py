@@ -5,7 +5,7 @@ import time
 
 camera = PiCamera()
 camera.resolution = (1296, 972)
-camera.framerate = 30
+camera.framerate = 42
 raw = PiRGBArray(camera, size=(1296, 972))
 
 window = cv2.namedWindow("camera")

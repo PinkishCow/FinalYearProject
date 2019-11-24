@@ -4,12 +4,7 @@ import os
 import logging
 logger = logging.getLogger(__name__)
 
-CONFIG_FILE = ""
-
-if sys.platform == "win32":
-    CONFIG_FILE = "config_win32.json"
-elif sys.platform.startswith("linux"):
-    CONFIG_FILE = "config_linux.json"
+CONFIG_FILE = "config.json"
 
 
 def verify_config():
@@ -26,7 +21,7 @@ def verify_config():
             return False
 
 
-# load the json file as cfg, allows access as config.json. Stop on error.
+# load the json file as cfg, allows access as config.example.json. Stop on error.
 def start_config():
     global cfg
     if verify_config():
