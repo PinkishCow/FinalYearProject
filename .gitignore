@@ -196,3 +196,4 @@ dmypy.json
 .pyre/
 
 !/camera/images/potato.jpg
+config.json
