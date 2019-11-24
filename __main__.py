@@ -3,7 +3,7 @@ import logging
 import sys
 import os
 import tools.config
-import examples.picameraExample as example
+import examples.stillImageExample as example
 
 logging.basicConfig(filename=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '.log', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -11,7 +11,7 @@ logger.info("Starting")
 logging.info(sys.platform)
 # whole program in here
 
-example.run_cam_example()
+example.run_still_example()
 
 
 
