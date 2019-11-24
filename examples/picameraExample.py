@@ -8,10 +8,10 @@ import tools.config
 def run_cam_example():
 
     camera = PiCamera()
-    camera.resolution = (tools.config.cfg['linux']['camera']['width'], tools.config.cfg['linux']['camera']['height'])
-    camera.framerate = tools.config.cfg['linux']['camera']['fps']
-    raw = PiRGBArray(camera, size=(tools.config.cfg['linux']['camera']['width'],
-                                   tools.config.cfg['linux']['camera']['height']))
+    camera.resolution = (tools.config.cfg['pi']['camera']['width'], tools.config.cfg['pi']['camera']['height'])
+    camera.framerate = tools.config.cfg['pi']['camera']['fps']
+    raw = PiRGBArray(camera, size=(tools.config.cfg['pi']['camera']['width'],
+                                   tools.config.cfg['pi']['camera']['height']))
 
     window = cv2.namedWindow("camera")
 
