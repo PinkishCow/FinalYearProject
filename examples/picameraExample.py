@@ -7,6 +7,10 @@ import tools.config
 # In the future, call this with a function and then do said function on each image maybe?
 
 
+def info():
+    return ["Pi Camera Example", "pi", [("Run Cam Example", run_cam_example()), ("test", test())]]
+
+
 def run_cam_example():
 
     camera = PiCamera()
@@ -33,3 +37,7 @@ def run_cam_example():
 
     camera.close()
     cv2.destroyAllWindows()
+
+
+def test():
+    print("test")

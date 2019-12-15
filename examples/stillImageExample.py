@@ -9,3 +9,5 @@ def run_still_example():
         cam.start_preview()
         time.sleep(.1)
         cam.capture("wow.jpg")
+
+
