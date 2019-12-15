@@ -18,8 +18,8 @@ def start():
 
 
 def take_image_set(path, count: int):
-    with picamera.PiCamera() as cam:
-        for x in range(count):
+    for x in range(count):
+        with picamera.PiCamera() as cam:
             time.sleep(.4)
             cam.resolution = (1024, 768)
             cam.start_preview()

@@ -1,13 +1,15 @@
 import time
-import picamera
+from picamera import PiCamera
 
 
 def run_still_example():
 
-    with picamera.PiCamera() as cam:
-        cam.resolution = (1024, 768)
-        cam.start_preview()
-        time.sleep(.1)
-        cam.capture("wow.jpg")
-
+    camera = PiCamera(
+        resolution=(1280, 720),
+        sensor_mode=6
+    )
+    camera.shutter_speed = 200
+    camera.start_preview()
+    time.sleep(10)
+    camera.capture('test.jpg')
 
