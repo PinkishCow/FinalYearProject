@@ -2,10 +2,12 @@ import time
 from picamera import PiCamera
 
 
-def run_still_example():
+def run_video_example():
 
     camera = PiCamera(
-        sensor_mode=5
+        resolution=(1640, 922),
+        sensor_mode=5,
+        framerate=30
     )
     camera.exposure_mode = "sports"
     camera.start_preview()
