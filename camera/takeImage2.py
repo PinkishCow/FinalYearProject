@@ -37,4 +37,5 @@ def take_image_set(folder, frames):
         begin = time.time()
         camera.capture_sequence(filenames(folder, frames), use_video_port=True)
         finish = time.time()
+        print(camera.exposure_mode, camera.exposure_speed, camera.framerate)
         print("Captured %d frames at %.2ffps" %(frames, frames / (finish - begin)))
