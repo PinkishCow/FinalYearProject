@@ -29,8 +29,11 @@ def filenames(folder, frames):
 def take_image_set(folder, frames):
     with picamera.PiCamera() as camera:
         camera.resolution = (1024, 768)
+        # 20000 shutter speed seems to be a good balance between light and blurriness
         camera.shutter_speed = tools.config.cfg['pi']['camera']['exposure']
+        # rot 180 because cameras mount makes them be mounted upside down
         camera.rotation = 180
+        # dont want extremely similar images in sequence
         camera.framerate = 5
         camera.start_preview()
         time.sleep(1)
