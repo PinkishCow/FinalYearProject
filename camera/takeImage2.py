@@ -1,6 +1,7 @@
 import time
 import picamera
 import os
+import tools.config
 
 
 def start():
@@ -28,6 +29,7 @@ def filenames(folder, frames):
 def take_image_set(folder, frames):
     with picamera.PiCamera() as camera:
         camera.resolution = (1024, 768)
+        camera.exposure_speed = tools.config.cfg['pi']['camera']['exposure']
         camera.framerate = 5
         camera.start_preview()
         time.sleep(1)
