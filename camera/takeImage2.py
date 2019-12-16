@@ -10,7 +10,7 @@ def start():
     print("Please input image count")
     frames = int(input())
     print("Taking {} images and saving them in a folder named {}".format(frames, folder))
-    folder = os.path.join("images", folder)
+    folder = os.path.join("camera", "images", folder)
     if os.path.exists(folder):
         take_image_set(folder, frames)
     else:
