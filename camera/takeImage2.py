@@ -25,6 +25,7 @@ def filenames():
     frame = 0
     while frame < frames:
         yield os.path.join(folder, "image%02d.jpg" % frame)
+        print(os.path.join(folder, "image%02d.jpg" % frame))
         frame += 1
 
 
