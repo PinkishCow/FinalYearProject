@@ -1,2 +1,2 @@
-__all__ = ["augmentImages", "createBackgroundFile", "tagImages"]
+__all__ = ["augmentImages", "createBackgroundFile", "ConvertTags"]
 from training import *

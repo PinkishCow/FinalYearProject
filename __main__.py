@@ -19,7 +19,7 @@ def menu():
     if sys.platform.startswith('win32'):
         import training
         choices = {"1": ('Create background file', training.createBackgroundFile.start),
-                   "2": ('Tag images', training.tagImages.start),
+                   "2": ('Convert image tags', training.ConvertTags.start),
                    "3": ('Augment images', training.augmentImages.start),
                    "Z": ('Exit', exit)}
     elif sys.platform.startswith('linux'):
