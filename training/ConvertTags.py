@@ -10,7 +10,6 @@ def start():
     file = input("Please input path to csv")
     name = input("Please input name to save csv as")
     output_dir = os.path.basename(file)
-    image_path = input("Please input path to image folders")
     lines = []
     if not (os.path.exists(file)):
         logging.error("File not found")
@@ -20,14 +19,14 @@ def start():
             reader = csv.reader(x, quoting=csv.QUOTE_NONNUMERIC)
             next(reader)
             for row in reader:
-                full_path = os.path.join(image_path, row[0])
-                new_x = abs(row[1] - 1024)
-                new_y = abs(row[2] - 768)
-                height = row[3] - row[1]
-                width = row[4] - row[2]
-                lines.append((full_path, new_x, new_y, height, width, row[5]))
+                full_path = row[0]
+                new_x = int(row[1])
+                new_y = int(row[2])
+                height = int(row[3] - row[1])
+                width = int(row[4] - row[2])
+                lines.append((full_path, 1, new_x, new_y, height, width, row[5]))#Remove row[5] for anything except the test set
         with open(os.path.join(os.path.dirname(file), name), 'w', newline='') as z:
-            writer = csv.writer(z, quoting=csv.QUOTE_NONNUMERIC)
+            writer = csv.writer(z)#Space delim for all non mixed
             for item in lines:
                 writer.writerow(item)
     exit()

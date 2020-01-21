@@ -28,3 +28,5 @@ def start():
     out.write(output)
     out.close()
     print("Complete")
+
+start()
