@@ -17,10 +17,10 @@ def invalid():
 
 def menu():
     if sys.platform.startswith('win32'):
-        import training.Cascade
-        choices = {"1": ('Create background file', training.Cascade.createBackgroundFile.start),
-                   "2": ('Convert image tags', training.Cascade.ConvertTags.start),
-                   "3": ('Augment images', training.Cascade.augmentImages.start),
+        import training.cascade
+        choices = {"1": ('Create background file', training.cascade.createbackgroundfile.start),
+                   "2": ('Convert image tags', training.cascade.converttags.start),
+                   "3": ('Augment images', training.cascade.augmentImages.start),
                    "Z": ('Exit', exit)}
     elif sys.platform.startswith('linux'):
         import examples
