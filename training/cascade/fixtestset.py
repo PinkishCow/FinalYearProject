@@ -45,6 +45,3 @@ def start():
             for item in spray_lines:
                 writer.writerow(item)
     exit()
-
-
-start()

@@ -29,4 +29,3 @@ def start():
     out.close()
     print("Complete")
 
-start()

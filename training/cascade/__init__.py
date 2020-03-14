@@ -1,2 +1,2 @@
-__all__ = ["augmentImages", "createbackgroundfile.py", "converttags.py"]
+__all__ = ["createbackgroundfile", "converttags"]
 from training.cascade import *
