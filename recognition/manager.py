@@ -76,7 +76,7 @@ class Client:
         self.receive_task = None  # receive message loop
 
     async def open_connection_test(self):
-        self.reader, self.writer = asyncio.open_connection("192.168.4.1", 6767)
+        self.reader, self.writer = await asyncio.open_connection("192.168.4.1", 6767)
 
         start_message = json.dumps("test")
         self.writer.write(start_message.encode())
@@ -84,7 +84,7 @@ class Client:
         self.receive_task = asyncio.create_task(self.receive_message())
 
     async def open_connection(self):
-        self.reader, self.writer = asyncio.open_connection("192.168.4.1", 6767)
+        self.reader, self.writer = await asyncio.open_connection("192.168.4.1", 6767)
 
         start_message = json.dumps("start")
         self.writer.write(start_message.encode())
