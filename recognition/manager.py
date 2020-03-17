@@ -33,6 +33,7 @@ class Server:
             await self.inputBlocker.wait()
 
     async def receive_message(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+        print("connected")
         while True:
             data = await reader.read()  # Reads all bytes when empty or -1, all examples seem to say you _must_ define a
             # size for some reason
