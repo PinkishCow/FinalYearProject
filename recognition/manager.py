@@ -33,37 +33,38 @@ class Server:
             await self.inputBlocker.wait()
 
     async def receive_message(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        data = await reader.read()  # Reads all bytes when empty or -1, all examples seem to say you _must_ define a
-        # size for some reason
-        message = json.loads(data.decode())
-        message_start = message[0]
-        logging.debug("Received {0}".format(message))
-        print("Received {0}".format(message))
+        while True:
+            data = await reader.read()  # Reads all bytes when empty or -1, all examples seem to say you _must_ define a
+            # size for some reason
+            message = json.loads(data.decode())
+            message_start = message[0]
+            logging.debug("Received {0}".format(message))
+            print("Received {0}".format(message))
 
-        if message_start == "start":
-            message_out = json.dumps(("setup", self.detector.id()))
-            writer.write(message_out.encode())
-        elif message_start == "error":
-            logging.error("Received stop from client: {0}".format(message))
-            message_out = json.dumps("stop")
-            writer.write(message_out.encode())
-            exit()
-        elif message_start == "result":
-            message_out = json.dumps("wait")
-            writer.write(message_out.encode())
-            self.clientResults = message[1]
-        elif message_start == "ready":
-            # Check if already exists sometime
-            asyncio.create_task(self.recognition_loop(writer))
-        elif message_start == "test":
-            print("Test successful")
-        else:
-            # Throw exceptions here instead
-            logging.error("Bad message returned: {0}, {1}".format(writer.get_extra_info("peername"), message))
-            print("Bad message received, stopping")
-            message_out = json.dumps("stop")
-            writer.write(message_out.encode())
-            exit()
+            if message_start == "start":
+                message_out = json.dumps(("setup", self.detector.id()))
+                writer.write(message_out.encode())
+            elif message_start == "error":
+                logging.error("Received stop from client: {0}".format(message))
+                message_out = json.dumps("stop")
+                writer.write(message_out.encode())
+                exit()
+            elif message_start == "result":
+                message_out = json.dumps("wait")
+                writer.write(message_out.encode())
+                self.clientResults = message[1]
+            elif message_start == "ready":
+                # Check if already exists sometime
+                asyncio.create_task(self.recognition_loop(writer))
+            elif message_start == "test":
+                print("Test successful")
+            else:
+                # Throw exceptions here instead
+                logging.error("Bad message returned: {0}, {1}".format(writer.get_extra_info("peername"), message))
+                print("Bad message received, stopping")
+                message_out = json.dumps("stop")
+                writer.write(message_out.encode())
+                exit()
 
 
 class Client:
