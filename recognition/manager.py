@@ -35,8 +35,8 @@ class Server:
     async def receive_message(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         print("connected")
         while True:
-            data = await reader.read(-1)  # Reads all bytes when empty or -1, all examples seem to say you _must_ define a
-            # size for some reason
+            data = await reader.readline()
+            print(data)
             message = json.loads(data.decode())
             message_start = message[0]
             logging.debug("Received {0}".format(message))
