@@ -202,4 +202,4 @@ def test_menu():
     choices.get(input(), [None, invalid])[1]()
 
 
-asyncio.run(can_test())
+#asyncio.run(can_test())
