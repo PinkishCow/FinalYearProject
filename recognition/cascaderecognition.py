@@ -4,11 +4,24 @@ import csv
 import os
 import sys
 import asyncio
+import tools.config as config
 from timeit import default_timer as timer
 
 
-def clean_results(matches):
+def server_cascade_setup():
+    recog = CascadeRecognition(config.cfg['pi']['cascade']['scale'],
+                               config.cfg['pi']['cascade']['neighbours'])
+    recog.add_classifier(config.cfg['pi']['cascade']['cascades']['can'], "can")
+    recog.add_classifier(config.cfg['pi']['cascade']['cascades']['cereal'], "cereal")
+    recog.add_classifier(config.cfg['pi']['cascade']['cascades']['butter'], "butter")
+    recog.add_classifier(config.cfg['pi']['cascade']['cascades']['crisp1'], "crisp1")
+    recog.add_classifier(config.cfg['pi']['cascade']['cascades']['crisp2'], "crisp2")
+    recog.add_classifier(config.cfg['pi']['cascade']['cascades']['milk'], "milk")
+    recog.add_classifier(config.cfg['pi']['cascade']['cascades']['spray'], "spray")
+    return recog
 
+
+def clean_results(matches):
     # https://puu.sh/F8xbG/6e6441ce24.png Layout of the value matches
     # Each "match" is a list of the item type and its recognition data
     # Its data is made up of; "0" The bounding boxes and "2" the certainty for each box
@@ -80,7 +93,8 @@ class CascadeRecognition:
                 w = rect[2]
                 h = rect[3]
                 cv2.rectangle(self.latest_image, (x, y), (x + w, y + h), (255, 255, 0), 2)
-                cv2.putText(self.latest_image, name + ": " + str(box[2][count]), (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (255, 255, 0), 2)
+                cv2.putText(self.latest_image, name + ": " + str(box[2][count]), (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX,
+                            0.9, (255, 255, 0), 2)
 
 
 async def accuracy_test():
@@ -123,7 +137,8 @@ async def accuracy_test():
                         # Improve false negative logic to allow for images with no item to be mixed in
                         for (x, y, w, h) in boxes[0]:
 
-                            if abs(x - [row[1]]) <= 100 and abs(y - row[2]) <= 100 and abs(w - (row[3] - row[1])) <= 100 and\
+                            if abs(x - [row[1]]) <= 100 and abs(y - row[2]) <= 100 and abs(
+                                    w - (row[3] - row[1])) <= 100 and \
                                     abs(h - (row[4] - row[2])) <= 100:
                                 if item_found:
                                     continue
