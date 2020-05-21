@@ -42,6 +42,13 @@ def clean_results(matches):
     return matches
 
 
+def fix_numpy(matches):
+    for match in matches:
+        match[1] = list(match[1])
+        for part in match[1]:
+            part = part.tolist()
+
+
 class CascadeRecognition:
     # Add max recognitions
     def __init__(self, scale, neighbours):
@@ -66,8 +73,8 @@ class CascadeRecognition:
                             list((classifier[1].detectMultiScale3(image, self.scale, self.neighbours,
                                                                   outputRejectLevels=True)))])
         if self.clean:
-            return clean_results(matches)
-        return matches
+            return fix_numpy(clean_results(matches))
+        return fix_numpy(matches)
 
     def add_classifier(self, classifier, name):
         self.classifiers.append((name, cv2.CascadeClassifier(classifier)))
