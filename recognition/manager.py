@@ -143,11 +143,11 @@ class Secondary:
 
     async def open_server(self):
         svr = await asyncio.start_server(self.receive_message, None, 8888)
-        asyncio.create_task(self.starter())
         addr = svr.sockets[0].getsockname()
         print('Socket: {0}'.format(addr))
         async with svr:
-            await svr.serve_forever()
+            await asyncio.gather(self.starter(), svr.serve_forever())
+            #await svr.serve_forever()
 
     async def send_message(self, message):
         print('Sending message: {0}'.format(message))
