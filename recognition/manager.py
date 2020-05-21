@@ -6,7 +6,7 @@ from recognition.picamerain import PiCameraInput
 
 
 def server_cascade_setup():
-    cascade_path = "home/pi/FinalYearProject/camera/cas"
+    cascade_path = "/home/pi/FinalYearProject/camera/cas"
     scale = 1.4
     neighbours = 20
     size = "3030"
