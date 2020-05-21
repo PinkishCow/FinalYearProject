@@ -51,6 +51,8 @@ def fix_numpy(matches):
             if isinstance(part, numpy.ndarray):
                 print(part)
                 part = part.tolist()
+                print(type(part))
+        print(match[1])
     return loc_matches
 
 
