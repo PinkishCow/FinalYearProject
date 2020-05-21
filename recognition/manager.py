@@ -29,8 +29,10 @@ class Main:
         self.secondaryip = secondaryip
 
     async def open_server(self):
-        print("server open")
-        svr = await asyncio.start_server(self.receive_message, self.ip, 6767)
+
+        svr = await asyncio.start_server(self.receive_message, self.ip, 8888)
+        addr = svr.sockets[0].getsockname()
+        print("Socket: {0}".format(addr))
 
         async with svr:
             await svr.serve_forever()
@@ -61,7 +63,7 @@ class Main:
 
     async def send_message(self, message):
         print("Sending message")
-        reader, writer = await asyncio.open_connection(self.secondaryip, 6767)
+        reader, writer = await asyncio.open_connection(self.secondaryip, 8888)
         writer.write(message.encode())
         data = await reader.read()
         message_in = json.loads(data.decode())
@@ -125,15 +127,15 @@ class Secondary:
         self.mainip = mainip
 
     async def open_server(self):
-        print("server open")
-        svr = await asyncio.start_server(self.receive_message, self.ip, 6767)
-
+        svr = await asyncio.start_server(self.receive_message, self.ip, 8888)
+        addr = svr.sockets[0].getsockname()
+        print("Socket: {0}".format(addr))
         async with svr:
             await svr.serve_forever()
 
     async def send_message(self, message):
         print("Sending message")
-        reader, writer = await asyncio.open_connection(self.mainip, 6767)
+        reader, writer = await asyncio.open_connection(self.mainip, 8888)
         writer.write(message.encode())
         data = await reader.read()
         message_in = json.loads(data.decode())
