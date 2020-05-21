@@ -46,6 +46,7 @@ def fix_numpy(matches):
     loc_matches = matches
     for match in loc_matches:
         match[1] = list(match[1])
+        print(match[1])
         for part in match[1]:
             if isinstance(part, numpy.ndarray):
                 print(part)
