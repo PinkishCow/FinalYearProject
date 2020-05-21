@@ -192,7 +192,7 @@ async def start_second():
 
 
 async def test():
-    reader, writer = await asyncio.open_connection("192.168.4.1", 6767)
+    reader, writer = await asyncio.open_connection("192.168.4.1", 8888)
     start_message = json.dumps("test")
     writer.write(start_message.encode())
 
