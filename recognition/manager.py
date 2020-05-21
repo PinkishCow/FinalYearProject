@@ -62,7 +62,9 @@ class Main:
             await self.secondaryWaiting.wait()
             self.secondaryWaiting.clear()
             await self.send_message(json.dumps('capture'))
-            localresults = json.loads(json.dumps(np.array(self.detector.recognise(self.source.getImage())).tolist()))  # It just works
+            localresults = self.detector.recognise(self.source.getImage())  # It just works
+            localresults = localresults.tolist()
+            print(type(localresults))
             print("awaiting complete")
             await self.secondaryComplete.wait()
             self.secondaryComplete.clear()
@@ -232,7 +234,9 @@ class Secondary:
             message_out = json.dumps('ok')
             writer.write(message_out.encode())
             writer.close()
-            results = np.array(self.detector.recognise(self.source.getImage())).tolist()
+            results = self.detector.recognise(self.source.getImage())
+            results = results.tolist()
+            print(type(results))
             await self.send_message(json.dumps(('result', results)))
 
 
