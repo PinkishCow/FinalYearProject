@@ -19,6 +19,19 @@ def server_cascade_setup():
     return recog
 
 
+def best_bounding_box(match):
+    high_pos_loc = 0
+    if len(match[1][2] >= 1):
+        for strengthposition, strengthvalue in enumerate(match[1][2]):
+            if strengthvalue >= match[1][2][strengthposition]:
+                high_pos_loc = strengthposition
+        ret_val = [match[0], [match[1][0][high_pos_loc], [], match[1][2][high_pos_loc]]]
+    elif len(match[1][2] == 0):
+        return None
+    else:
+        return match
+
+
 class Main:
     def __init__(self, ip, secondaryip):
         self.secondaryResults = []
@@ -47,24 +60,32 @@ class Main:
             await self.secondaryWaiting.wait()
             self.secondaryWaiting.clear()
             await self.send_message(json.dumps('capture'))
-            localresults = self.detector.recognise(self.source.getImage())
+            localresults = json.loads(json.dumps(self.detector.recognise(self.source.getImage())))  # It just works
             print("awaiting complete")
             await self.secondaryComplete.wait()
             self.secondaryComplete.clear()
             final_matches = []
-            all_matches = localresults + self.secondaryResults
-            print(all_matches)
-            done_names = []
-            for match in all_matches:
-                if not match[0] in done_names:
-                    top_match = match
-                    done_names.append(match[0])
-                    for compare in all_matches:
-                        if compare[0] == top_match[0]:
-                            if compare[1][2] >= top_match[1][2]:
-                                top_match = compare
-                    final_matches.append(top_match)
-            print(final_matches)  # Put through present_image if on system with a desktop active
+            # Visual layout of the value matches is in the report appendix
+            # All classifiers always return, even if its all empty
+            for counter, item in enumerate(localresults):  # 0
+                local_best = best_bounding_box(item)
+                secondary_best = best_bounding_box(self.secondaryResults[counter])
+                if local_best is None and secondary_best is None:
+                    continue
+                elif local_best is None and secondary_best is not None:
+                    final_matches.append(secondary_best)
+                elif secondary_best is None and local_best is not None:
+                    final_matches.append(local_best)
+                elif local_best is not None and secondary_best is not None:
+                    if local_best[1][2] >= secondary_best[1][2]:
+                        final_matches.append(local_best)
+                    else:
+                        final_matches.append(secondary_best)
+            if len(final_matches) >= 1:
+                print(final_matches)
+            else:
+                print("No matches")
+
 
     async def send_message(self, message):
         print('Sending message: {0}'.format(message))

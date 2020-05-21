@@ -7,14 +7,11 @@ import numpy
 import csv
 import os
 
-#import pyodbc
 
-
-
-
+# import pyodbc
 
 def clean_results(matches):
-    # https://puu.sh/F8xbG/6e6441ce24.png Layout of the value matches
+    # Visual layout of the value matches is in the report appendix
     # Each "match" is a list of the item type and its recognition data
     # Its data is made up of; "0" The bounding boxes and "2" the certainty for each box
     # Possibly way way overdone, but it works, finally
@@ -322,7 +319,6 @@ def cascade_speed_test():
 def invalid():
     print("Not a valid choice")
 
-
 # Change as needed
 
-#asyncio.run(accuracy_test())
+# asyncio.run(accuracy_test())
