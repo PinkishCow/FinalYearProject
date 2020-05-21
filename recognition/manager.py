@@ -21,12 +21,13 @@ def server_cascade_setup():
 
 def best_bounding_box(match):
     high_pos_loc = 0
-    if len(match[1][2] >= 1):
+    if len(match[1][2]) >= 1:
         for strengthposition, strengthvalue in enumerate(match[1][2]):
             if strengthvalue >= match[1][2][strengthposition]:
                 high_pos_loc = strengthposition
         ret_val = [match[0], [match[1][0][high_pos_loc], [], match[1][2][high_pos_loc]]]
-    elif len(match[1][2] == 0):
+        return ret_val
+    elif len(match[1][2]) == 0:
         return None
     else:
         return match
