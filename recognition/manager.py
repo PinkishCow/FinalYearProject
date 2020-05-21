@@ -60,6 +60,7 @@ class Main:
             print(final_matches)  # Put through present_image if on system with a desktop active
 
     async def send_message(self, message):
+        print("Sending message")
         reader, writer = await asyncio.open_connection(self.secondaryip, 6767)
         writer.write(message.encode())
         data = await reader.read()
@@ -131,6 +132,7 @@ class Secondary:
             await svr.serve_forever()
 
     async def send_message(self, message):
+        print("Sending message")
         reader, writer = await asyncio.open_connection(self.mainip, 6767)
         writer.write(message.encode())
         data = await reader.read()
@@ -185,6 +187,12 @@ async def start_second():
     sc = Secondary('192.168.4.14', '192.168.4.1')
     asyncio.create_task(sc.open_server())
     await sc.send_message(json.dumps("start"))
+
+
+async def test():
+    reader, writer = await asyncio.open_connection("192.168.4.1", 6767)
+    start_message = json.dumps("test")
+    writer.write(start_message.encode())
 
 # class Server:
 #
