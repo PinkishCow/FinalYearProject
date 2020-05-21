@@ -44,15 +44,15 @@ def clean_results(matches):
 
 def fix_numpy(matches):
     loc_matches = matches
-    for match in loc_matches:
-        match[1] = list(match[1])
+    for m_count, match in enumerate(loc_matches):
+        loc_matches[m_count][1] = list(match[1])
         print(match[1])
-        for part in match[1]:
+        for count, part in enumerate(match[1]):
             if isinstance(part, numpy.ndarray):
                 print(part)
-                part = part.tolist()
-                print(type(part))
-        print(match[1])
+                loc_matches[m_count][1][count] = part.tolist()
+                print(type(loc_matches[m_count][1][count]))
+        print(loc_matches[m_count][1])
     return loc_matches
 
 
