@@ -3,6 +3,7 @@ import json
 from recognition.cascaderecognition import CascadeRecognition
 import os
 from recognition.picamerain import PiCameraInput
+import numpy as np
 
 
 def server_cascade_setup():
@@ -61,7 +62,7 @@ class Main:
             await self.secondaryWaiting.wait()
             self.secondaryWaiting.clear()
             await self.send_message(json.dumps('capture'))
-            localresults = json.loads(json.dumps(self.detector.recognise(self.source.getImage())))  # It just works
+            localresults = json.loads(json.dumps(np.array(self.detector.recognise(self.source.getImage())).tolist()))  # It just works
             print("awaiting complete")
             await self.secondaryComplete.wait()
             self.secondaryComplete.clear()
@@ -176,7 +177,6 @@ class Secondary:
         print('Socket: {0}'.format(addr))
         async with svr:
             await asyncio.gather(self.starter(), svr.serve_forever())
-            #await svr.serve_forever()
 
     async def send_message(self, message):
         print('Sending message: {0}'.format(message))
@@ -232,7 +232,7 @@ class Secondary:
             message_out = json.dumps('ok')
             writer.write(message_out.encode())
             writer.close()
-            results = self.detector.recognise(self.source.getImage())
+            results = np.array(self.detector.recognise(self.source.getImage())).tolist()
             await self.send_message(json.dumps(('result', results)))
 
 
