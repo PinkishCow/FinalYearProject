@@ -1,9 +1,5 @@
 import os
-import logging
 import csv
-
-# logger = logging.getLogger(__name__)
-# logger.info("Loading")
 
 
 def start():
@@ -14,7 +10,7 @@ def start():
     cereal_lines = []
     spray_lines = []
     if not (os.path.exists(file)):
-        logging.error("File not found")
+        print("File not found")
         return
     else:
         with open(file, newline='') as x:

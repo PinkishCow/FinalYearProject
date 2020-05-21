@@ -14,7 +14,7 @@ def clean_results(matches):
     # Visual layout of the value matches is in the report appendix
     # Each "match" is a list of the item type and its recognition data
     # Its data is made up of; "0" The bounding boxes and "2" the certainty for each box
-    # Possibly way way overdone, but it works, finally
+    # Possibly way way overdone, but it works, finally, no thanks to numpy
     for counter, match in enumerate(matches):  # Enumerate returns the counter thank god
         data = match[1]
         boxes = data[0]
@@ -104,7 +104,7 @@ class CascadeRecognition:
                 cv2.putText(self.latest_image, name + ": " + str(box[2][count]), (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX,
                             0.9, (255, 255, 0), 2)
 
-
+# Commented out for running on linux
 # async def accuracy_test():
 #     classifier_folder = "D:\\Desktop\\Dissertation\\images\\cas"
 #     image_csv = "D:\\Desktop\\Dissertation\\images\\testingImages\\vott-csv-export\\TestingImages-export.csv"

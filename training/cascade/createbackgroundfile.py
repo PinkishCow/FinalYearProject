@@ -1,9 +1,4 @@
 import os
-import logging
-
-
-logger = logging.getLogger(__name__)
-logger.info("Loading")
 
 
 def start():

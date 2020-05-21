@@ -1,7 +1,7 @@
 import time
 import picamera
 import os
-import tools.config
+
 
 
 def start():
@@ -29,7 +29,7 @@ def filenames(folder, frames):
 def take_image_set(folder, frames):
     with picamera.PiCamera() as camera:
         camera.resolution = (1024, 768)
-        # 20000 shutter speed seems to be a good balance between light and blurriness
+        # 30000 shutter speed seems to be a good balance between light and blurriness
         camera.shutter_speed = 30000
         # rot 180 because cameras mount makes them be mounted upside down
         camera.rotation = 180

@@ -13,6 +13,7 @@ class PiCameraInput:
         self.width = width
 
     def getImage(self):
+        #  From picamera documentation https://picamera.readthedocs.io/en/release-1.10/recipes1.html
         image = np.empty((self.height * self.width * 3,), dtype=np.uint8)
         self.camera.capture(image, 'bgr')
         image = image.reshape((self.height, self.width, 3))

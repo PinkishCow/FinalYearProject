@@ -1,11 +1,10 @@
-from typing import List
 
 import random
 import tensorflow as tf
 import csv
 import os
 import glob
-import logging
+
 from object_detection.utils import dataset_util
 
 
@@ -36,7 +35,7 @@ def start():
         file = os.path.join(folder, glob.glob1(folder, "*.csv")[0])
         print(file)
         if not (os.path.exists(file)):
-            logging.error("File not found..")
+            print("File not found..")
             return
         else:
             with open(file, newline='') as x:
@@ -46,7 +45,6 @@ def start():
                     print(row[0])
                     if row[5] not in item_ids:
                         print("item_ids broken")
-                        logging.error("item_ids broken")
                         exit()
                     image_path = os.path.join(folder, row[0])
                     encoded_image = open(image_path, 'rb').read()
