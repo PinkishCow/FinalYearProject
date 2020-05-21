@@ -146,6 +146,7 @@ class Secondary:
         print('Sending message')
         reader, writer = await asyncio.open_connection(self.mainip, 8888)
         writer.write(message.encode())
+        writer.write_eof()
         data = await reader.read()
         message_in = json.loads(data.decode())
         print(message_in)
