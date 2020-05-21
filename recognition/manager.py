@@ -29,12 +29,14 @@ class Main:
         self.secondaryip = secondaryip
 
     async def open_server(self):
+        print("server open")
         svr = await asyncio.start_server(self.receive_message, self.ip, 6767)
 
         async with svr:
             await svr.serve_forever()
 
     async def recognition_loop(self):
+        print("rec")
         while not self.exitKeyPressed:
             self.secondaryResults = []
             await self.secondaryWaiting.wait()
@@ -122,6 +124,7 @@ class Secondary:
         self.mainip = mainip
 
     async def open_server(self):
+        print("server open")
         svr = await asyncio.start_server(self.receive_message, self.ip, 6767)
 
         async with svr:
@@ -179,7 +182,7 @@ async def start_main():
 
 
 async def start_second():
-    sc = Main('192.168.4.14', '192.168.4.1')
+    sc = Secondary('192.168.4.14', '192.168.4.1')
     asyncio.create_task(sc.open_server())
     await sc.send_message(json.dumps("start"))
 
