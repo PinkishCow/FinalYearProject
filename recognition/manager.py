@@ -65,6 +65,7 @@ class Main:
         print('Sending message: {0}'.format(message))
         reader, writer = await asyncio.open_connection(self.secondaryip, 8888)
         writer.write(message.encode())
+        writer.write_eof()
         data = await reader.read()
         message_in = json.loads(data.decode())
         print(message_in)
