@@ -81,7 +81,10 @@ class Main:
         data = await reader.read()
         print(data)
         message = json.loads(data.decode())
-        message_start = message[0]
+        if isinstance(message, list):
+            message_start = message[0]
+        else:
+            message_start = message
         print('Received {0}'.format(message))
         print(message_start)
 
@@ -158,7 +161,10 @@ class Secondary:
         data = await reader.read()
         print(data)
         message = json.loads(data.decode())
-        message_start = message[0]
+        if isinstance(message, list):
+            message_start = message[0]
+        else:
+            message_start = message
         print('Received {0}'.format(message))
 
         if message_start == 'setup':
