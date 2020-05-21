@@ -12,7 +12,8 @@ def server_cascade_setup():
     size = '3030'
     recog = CascadeRecognition(scale, neighbours)
     for item in os.listdir(os.path.join(cascade_path, size)):
-        recog.add_classifier(os.path.join(cascade_path, size, item, 'cascade.xml'), item)
+        print(os.path.join(cascade_path, size, item, "cascade.xml"))
+        recog.add_classifier(os.path.join(cascade_path, size, item, "cascade.xml"), item)
     recog.toggle_clean(True)
     return recog
 
@@ -51,6 +52,7 @@ class Main:
             self.secondaryComplete.clear()
             final_matches = []
             all_matches = localresults + self.secondaryResults
+            print(all_matches)
             done_names = []
             for match in all_matches:
                 if not match[0] in done_names:
