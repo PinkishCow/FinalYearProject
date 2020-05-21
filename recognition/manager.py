@@ -83,6 +83,7 @@ class Main:
         message = json.loads(data.decode())
         message_start = message[0]
         print('Received {0}'.format(message))
+        print(message_start)
 
         if message_start == 'start':
             message_out = json.dumps('ok')
