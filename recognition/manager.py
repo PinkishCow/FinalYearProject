@@ -138,9 +138,9 @@ class Secondary:
         svr = await asyncio.start_server(self.receive_message, None, 8888)
         addr = svr.sockets[0].getsockname()
         print('Socket: {0}'.format(addr))
+        await self.send_message(json.dumps('start'))
         async with svr:
             await svr.serve_forever()
-        await self.send_message(json.dumps('start'))
 
     async def send_message(self, message):
         print('Sending message')
