@@ -16,3 +16,4 @@ class PiCameraInput:
         image = np.empty((self.height * self.width * 3,), dtype=np.uint8)
         self.camera.capture(image, 'bgr')
         image = image.reshape((self.height, self.width, 3))
+        return image
