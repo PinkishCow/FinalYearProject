@@ -41,10 +41,12 @@ class Main:
         print('rec')
         while not self.exitKeyPressed:
             self.secondaryResults = []
+            print("awaiting waiting")
             await self.secondaryWaiting.wait()
             self.secondaryWaiting.clear()
             await self.send_message(json.dumps('capture'))
             localresults = self.detector.recognise(self.source.getImage())
+            print("awaiting complete")
             await self.secondaryComplete.wait()
             self.secondaryComplete.clear()
             final_matches = []
@@ -116,6 +118,7 @@ class Main:
             self.secondaryWaiting.set()
         elif message_start == 'ready':
             asyncio.create_task(self.recognition_loop())
+            await self.send_message(json.dumps('wait'))
         elif message_start == 'test':
             print('Test successful')
         elif message_start == 'stop':
