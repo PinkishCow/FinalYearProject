@@ -84,9 +84,13 @@ class Main:
                     else:
                         final_matches.append(secondary_best)
             if len(final_matches) >= 1:
+                print("-----------------------MATCHES--------------------------")
                 print(final_matches)
+                print("--------------------------------------------------------")
             else:
+                print("-----------------------MATCHES--------------------------")
                 print("No matches")
+                print("--------------------------------------------------------")
 
 
     async def send_message(self, message):
