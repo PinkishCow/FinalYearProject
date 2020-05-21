@@ -62,13 +62,16 @@ class Main:
             print(final_matches)  # Put through present_image if on system with a desktop active
 
     async def send_message(self, message):
-        print('Sending message')
+        print('Sending message: {0}'.format(message))
         reader, writer = await asyncio.open_connection(self.secondaryip, 8888)
         writer.write(message.encode())
         data = await reader.read()
         message_in = json.loads(data.decode())
         print(message_in)
-        message_start = message_in[0]
+        if isinstance(message_in, list):
+            message_start = message_in[0]
+        else:
+            message_start = message_in
         if not message_start == 'ok':
             print('Response error')
             print(message_in)
@@ -134,23 +137,30 @@ class Secondary:
         self.ip = ip
         self.mainip = mainip
 
+    async def starter(self):
+        await asyncio.sleep(10)
+        await self.send_message(json.dumps('start'))
+
     async def open_server(self):
         svr = await asyncio.start_server(self.receive_message, None, 8888)
+        asyncio.create_task(self.starter())
         addr = svr.sockets[0].getsockname()
         print('Socket: {0}'.format(addr))
-        await self.send_message(json.dumps('start'))
         async with svr:
             await svr.serve_forever()
 
     async def send_message(self, message):
-        print('Sending message')
+        print('Sending message: {0}'.format(message))
         reader, writer = await asyncio.open_connection(self.mainip, 8888)
         writer.write(message.encode())
         writer.write_eof()
         data = await reader.read()
         message_in = json.loads(data.decode())
         print(message_in)
-        message_start = message_in[0]
+        if isinstance(message_in, list):
+            message_start = message_in[0]
+        else:
+            message_start = message_in
         if not message_start == 'ok':
             print('Response error')
             print(message_in)
@@ -206,7 +216,6 @@ async def start_main():
 async def start_second():
     sc = Secondary('192.168.4.14', '192.168.4.1')
     await sc.open_server()
-
 
 
 async def test():
