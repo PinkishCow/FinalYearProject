@@ -75,6 +75,11 @@ class CascadeRecognition:
     def add_classifier(self, classifier, name):
         self.classifiers.append((name, cv2.CascadeClassifier(classifier)))
 
+    def load_test(self):
+        for classifier in self.classifiers:
+            print(classifier[0])
+            print(classifier[1].empty())
+
     def present_image(self, matches):
         for match in matches:
             name = match[0]

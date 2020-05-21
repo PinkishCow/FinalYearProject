@@ -15,6 +15,7 @@ def server_cascade_setup():
         print(os.path.join(cascade_path, size, item, "cascade.xml"))
         recog.add_classifier(os.path.join(cascade_path, size, item, "cascade.xml"), item)
     recog.toggle_clean(True)
+    recog.load_test()
     return recog
 
 
