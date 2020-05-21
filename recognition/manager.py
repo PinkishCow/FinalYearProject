@@ -175,12 +175,12 @@ class Secondary:
 
 async def start_main():
     mn = Main('192.168.4.1', '192.168.4.14')
-    asyncio.run(mn.open_server())
+    asyncio.create_task(mn.open_server())
 
 
 async def start_second():
     sc = Main('192.168.4.14', '192.168.4.1')
-    asyncio.run(sc.open_server())
+    asyncio.create_task(sc.open_server())
     await sc.send_message(json.dumps("start"))
 
 # class Server:
