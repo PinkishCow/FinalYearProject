@@ -140,6 +140,7 @@ class Secondary:
         print('Socket: {0}'.format(addr))
         async with svr:
             await svr.serve_forever()
+        await self.send_message(json.dumps('start'))
 
     async def send_message(self, message):
         print('Sending message')
@@ -204,7 +205,7 @@ async def start_main():
 async def start_second():
     sc = Secondary('192.168.4.14', '192.168.4.1')
     await sc.open_server()
-    await sc.send_message(json.dumps('start'))
+
 
 
 async def test():
