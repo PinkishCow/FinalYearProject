@@ -173,12 +173,12 @@ class Secondary:
             await self.send_message(json.dumps(("result", results)))
 
 
-def start_main():
+async def start_main():
     mn = Main('192.168.4.1', '192.168.4.14')
     asyncio.run(mn.open_server())
 
 
-def start_second():
+async def start_second():
     sc = Main('192.168.4.14', '192.168.4.1')
     asyncio.run(sc.open_server())
     await sc.send_message(json.dumps("start"))
