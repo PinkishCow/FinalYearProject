@@ -43,12 +43,14 @@ def clean_results(matches):
 
 
 def fix_numpy(matches):
-    for match in matches:
+    loc_matches = matches
+    for match in loc_matches:
         match[1] = list(match[1])
         for part in match[1]:
             if isinstance(part, numpy.ndarray):
                 print(part)
                 part = part.tolist()
+    return loc_matches
 
 
 class CascadeRecognition:
