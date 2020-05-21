@@ -2,9 +2,6 @@ import cv2
 from picamera import PiCamera
 from picamera.array import PiRGBArray
 import time
-import tools.config
-
-# In the future, call this with a function and then do said function on each image maybe?
 
 
 def info():
@@ -14,10 +11,9 @@ def info():
 def run_cam_example():
 
     camera = PiCamera()
-    camera.resolution = (tools.config.cfg['pi']['camera']['width'], tools.config.cfg['pi']['camera']['height'])
-    camera.framerate = tools.config.cfg['pi']['camera']['fps']
-    raw = PiRGBArray(camera, size=(tools.config.cfg['pi']['camera']['width'],
-                                   tools.config.cfg['pi']['camera']['height']))
+    camera.resolution = (640, 480)
+    camera.framerate = 60
+    raw = PiRGBArray(camera, size=(640, 480))
 
     window = cv2.namedWindow("camera")
 

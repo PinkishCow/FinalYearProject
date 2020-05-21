@@ -1,23 +1,32 @@
 import asyncio
-import logging
 import json
-import tools.config as config
-
-# Every image source has same class
-# Assign sources and detectors to IDs
-
-logger = logging.getLogger(__name__)
+from recognition.cascaderecognition import CascadeRecognition
+import os
+from recognition.picamerain import PiCameraInput
 
 
-class Server:
-    def __init__(self, imagesource, detector, ip, role=False): # True = main, False = secondary
-        self.clientResults = None
-        self.inputBlocker = asyncio.Event()
-        self.detector = detector
-        self.source = imagesource
+def server_cascade_setup():
+    cascade_path = "home/pi/FinalYearProject/camera/cas"
+    scale = 1.4
+    neighbours = 20
+    size = "3030"
+    recog = CascadeRecognition(scale, neighbours)
+    for item in os.listdir(os.path.join(cascade_path, size)):
+        recog.add_classifier(os.path.join(cascade_path, size, item, "cascade.xml"), item)
+    recog.toggle_clean(True)
+    return recog
+
+
+class Main:
+    def __init__(self, ip, secondaryip):
+        self.secondaryResults = []
+        self.secondaryWaiting = asyncio.Event()
+        self.secondaryComplete = asyncio.Event()
+        self.detector = server_cascade_setup()  # Hard coded since TF isn't available
+        self.source = PiCameraInput(768, 1024, 5, 30000)
         self.exitKeyPressed = False
-        self.role = role
         self.ip = ip
+        self.secondaryip = secondaryip
 
     async def open_server(self):
         svr = await asyncio.start_server(self.receive_message, self.ip, 6767)
@@ -25,31 +34,159 @@ class Server:
         async with svr:
             await svr.serve_forever()
 
-    async def recognition_loop(self, writer: asyncio.StreamWriter):
+    async def recognition_loop(self):
         while not self.exitKeyPressed:
-            self.inputBlocker.clear()
-            self.clientResults = None
-            writer.write(json.dumps("capture").encode())
+            self.secondaryResults = []
+            await self.secondaryWaiting.wait()
+            self.secondaryWaiting.clear()
+            await self.send_message(json.dumps("capture"))
             localresults = self.detector.recognise(self.source.getImage())
-            await self.inputBlocker.wait()
+            await self.secondaryComplete.wait()
+            self.secondaryComplete.clear()
+            final_matches = []
+            all_matches = localresults + self.secondaryResults
+            done_names = []
+            for match in all_matches:
+                if not match[0] in done_names:
+                    top_match = match
+                    done_names.append(match[0])
+                    for compare in all_matches:
+                        if compare[0] == top_match[0]:
+                            if compare[1][2] >= top_match[1][2]:
+                                top_match = compare
+                    final_matches.append(top_match)
+            print(final_matches)  # Put through present_image if on system with a desktop active
+
+    async def send_message(self, message):
+        reader, writer = await asyncio.open_connection(self.secondaryip, 6767)
+        writer.write(message.encode())
+        data = await reader.read()
+        message_in = json.loads(data.decode())
+        print(message_in)
+        message_start = message_in[0]
+        if not message_start == "ok":
+            print("Response error")
+            print(message_in)
+            exit()
+        writer.close()
 
     async def receive_message(self, reader, writer):
         print("Message In")
 
         data = await reader.read()
-        print("b")
         print(data)
         message = json.loads(data.decode())
         message_start = message[0]
-        logging.debug("Received {0}".format(message))
         print("Received {0}".format(message))
-        
 
+        if message_start == "start":
+            message_out = json.dumps("ok")
+            writer.write(message_out.encode())
+            await self.send_message(json.dumps("setup"))
+        elif message_start == "error":
+            message_out = json.dumps("stop")
+            writer.write(message_out.encode())
+            exit()
+        elif message_start == "result":
+            message_out = json.dumps("ok")
+            writer.write(message_out.encode())
+            self.secondaryResults = message[1]
+            self.secondaryComplete.set()
+            await self.send_message(json.dumps("wait"))
+        elif message_start == "waiting":
+            message_out = json.dumps("ok")
+            writer.write(message_out.encode())
+            self.secondaryWaiting.set()
+        elif message_start == "ready":
+            asyncio.create_task(self.recognition_loop())
+        elif message_start == "test":
+            print("Test successful")
+        elif message_start == "stop":
+            print("stopping")
+            exit()
+        else:
+            print("Bad message received, stopping")
+            message_out = json.dumps("stop")
+            writer.write(message_out.encode())
+            exit()
+        writer.close()
+
+
+class Secondary:
+    def __init__(self, ip, mainip):
+        self.waiting = asyncio.Event()
+        self.detector = server_cascade_setup()  # Hard coded since TF isn't available
+        self.source = PiCameraInput(768, 1024, 5, 30000)
+        self.exitKeyPressed = False
+        self.ip = ip
+        self.mainip = mainip
+
+    async def open_server(self):
+        svr = await asyncio.start_server(self.receive_message, self.ip, 6767)
+
+        async with svr:
+            await svr.serve_forever()
+
+    async def send_message(self, message):
+        reader, writer = await asyncio.open_connection(self.mainip, 6767)
+        writer.write(message.encode())
+        data = await reader.read()
+        message_in = json.loads(data.decode())
+        print(message_in)
+        message_start = message_in[0]
+        if not message_start == "ok":
+            print("Response error")
+            print(message_in)
+            exit()
+        writer.close()
+
+    async def receive_message(self, reader, writer):
+        print("Message In")
+
+        data = await reader.read()
+        print(data)
+        message = json.loads(data.decode())
+        message_start = message[0]
+        print("Received {0}".format(message))
+
+        if message_start == "setup":
+            message_out = json.dumps("ok")
+            writer.write(message_out.encode())
+            await self.send_message(json.dumps("ready"))
+        elif message_start == "error":
+            message_out = json.dumps("stop")
+            writer.write(message_out.encode())
+            exit()
+        elif message_start == "stop":
+            print("stopping")
+            exit()
+        elif message_start == "wait":
+            message_out = json.dumps("ok")
+            writer.write(message_out.encode())
+            await self.send_message(json.dumps("waiting"))
+        elif message_start == "test":
+            print("Test successful")
+        elif message_start == "capture":
+            message_out = json.dumps("ok")
+            writer.write(message_out.encode())
+            results = self.detector.recognise(self.source.getImage())
+            await self.send_message(json.dumps(("result", results)))
+
+
+def start_main():
+    mn = Main('192.168.4.1', '192.168.4.14')
+    asyncio.run(mn.open_server())
+
+
+def start_second():
+    sc = Main('192.168.4.14', '192.168.4.1')
+    asyncio.run(sc.open_server())
+    await sc.send_message(json.dumps("start"))
 
 # class Server:
 #
 #     def __init__(self, imagesource, detector):
-#         self.clientResults = None
+#         self.secondaryResults = None
 #         self.inputBlocker = asyncio.Event()
 #         self.detector = detector
 #         self.source = imagesource
@@ -64,7 +201,7 @@ class Server:
 #     async def recognition_loop(self, writer: asyncio.StreamWriter):
 #         while not self.exitKeyPressed:
 #             self.inputBlocker.clear()
-#             self.clientResults = None
+#             self.secondaryResults = None
 #             writer.write(json.dumps("capture").encode())
 #             localresults = self.detector.recognise(self.source.getImage())
 #             await self.inputBlocker.wait()
@@ -93,7 +230,7 @@ class Server:
 #             elif message_start == "result":
 #                 message_out = json.dumps("wait")
 #                 writer.write(message_out.encode())
-#                 self.clientResults = message[1]
+#                 self.secondaryResults = message[1]
 #             elif message_start == "ready":
 #                 # Check if already exists sometime
 #                 asyncio.create_task(self.recognition_loop(writer))
