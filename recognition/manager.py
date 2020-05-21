@@ -6,13 +6,13 @@ from recognition.picamerain import PiCameraInput
 
 
 def server_cascade_setup():
-    cascade_path = "/home/pi/FinalYearProject/camera/cas"
+    cascade_path = '/home/pi/FinalYearProject/camera/cas'
     scale = 1.4
     neighbours = 20
-    size = "3030"
+    size = '3030'
     recog = CascadeRecognition(scale, neighbours)
     for item in os.listdir(os.path.join(cascade_path, size)):
-        recog.add_classifier(os.path.join(cascade_path, size, item, "cascade.xml"), item)
+        recog.add_classifier(os.path.join(cascade_path, size, item, 'cascade.xml'), item)
     recog.toggle_clean(True)
     return recog
 
@@ -32,18 +32,18 @@ class Main:
 
         svr = await asyncio.start_server(self.receive_message, None, 8888)
         addr = svr.sockets[0].getsockname()
-        print("Socket: {0}".format(addr))
+        print('Socket: {0}'.format(addr))
 
         async with svr:
             await svr.serve_forever()
 
     async def recognition_loop(self):
-        print("rec")
+        print('rec')
         while not self.exitKeyPressed:
             self.secondaryResults = []
             await self.secondaryWaiting.wait()
             self.secondaryWaiting.clear()
-            await self.send_message(json.dumps("capture"))
+            await self.send_message(json.dumps('capture'))
             localresults = self.detector.recognise(self.source.getImage())
             await self.secondaryComplete.wait()
             self.secondaryComplete.clear()
@@ -62,59 +62,63 @@ class Main:
             print(final_matches)  # Put through present_image if on system with a desktop active
 
     async def send_message(self, message):
-        print("Sending message")
+        print('Sending message')
         reader, writer = await asyncio.open_connection(self.secondaryip, 8888)
         writer.write(message.encode())
         data = await reader.read()
         message_in = json.loads(data.decode())
         print(message_in)
         message_start = message_in[0]
-        if not message_start == "ok":
-            print("Response error")
+        if not message_start == 'ok':
+            print('Response error')
             print(message_in)
             exit()
         writer.close()
 
     async def receive_message(self, reader, writer):
-        print("Message In")
+        print('Message In')
 
         data = await reader.read()
         print(data)
         message = json.loads(data.decode())
         message_start = message[0]
-        print("Received {0}".format(message))
+        print('Received {0}'.format(message))
 
-        if message_start == "start":
-            message_out = json.dumps("ok")
+        if message_start == 'start':
+            message_out = json.dumps('ok')
             writer.write(message_out.encode())
-            await self.send_message(json.dumps("setup"))
-        elif message_start == "error":
-            message_out = json.dumps("stop")
+            writer.close()
+            await self.send_message(json.dumps('setup'))
+        elif message_start == 'error':
+            message_out = json.dumps('stop')
             writer.write(message_out.encode())
+            writer.close()
             exit()
-        elif message_start == "result":
-            message_out = json.dumps("ok")
+        elif message_start == 'result':
+            message_out = json.dumps('ok')
             writer.write(message_out.encode())
+            writer.close()
             self.secondaryResults = message[1]
             self.secondaryComplete.set()
-            await self.send_message(json.dumps("wait"))
-        elif message_start == "waiting":
-            message_out = json.dumps("ok")
+            await self.send_message(json.dumps('wait'))
+        elif message_start == 'waiting':
+            message_out = json.dumps('ok')
             writer.write(message_out.encode())
+            writer.close()
             self.secondaryWaiting.set()
-        elif message_start == "ready":
+        elif message_start == 'ready':
             asyncio.create_task(self.recognition_loop())
-        elif message_start == "test":
-            print("Test successful")
-        elif message_start == "stop":
-            print("stopping")
+        elif message_start == 'test':
+            print('Test successful')
+        elif message_start == 'stop':
+            print('stopping')
             exit()
         else:
-            print("Bad message received, stopping")
-            message_out = json.dumps("stop")
+            print('Bad message received, stopping')
+            message_out = json.dumps('stop')
             writer.write(message_out.encode())
+            writer.close()
             exit()
-        writer.close()
 
 
 class Secondary:
@@ -129,55 +133,60 @@ class Secondary:
     async def open_server(self):
         svr = await asyncio.start_server(self.receive_message, None, 8888)
         addr = svr.sockets[0].getsockname()
-        print("Socket: {0}".format(addr))
+        print('Socket: {0}'.format(addr))
         async with svr:
             await svr.serve_forever()
 
     async def send_message(self, message):
-        print("Sending message")
+        print('Sending message')
         reader, writer = await asyncio.open_connection(self.mainip, 8888)
         writer.write(message.encode())
         data = await reader.read()
         message_in = json.loads(data.decode())
         print(message_in)
         message_start = message_in[0]
-        if not message_start == "ok":
-            print("Response error")
+        if not message_start == 'ok':
+            print('Response error')
             print(message_in)
             exit()
         writer.close()
 
     async def receive_message(self, reader, writer):
-        print("Message In")
+        print('Message In')
 
         data = await reader.read()
         print(data)
         message = json.loads(data.decode())
         message_start = message[0]
-        print("Received {0}".format(message))
+        print('Received {0}'.format(message))
 
-        if message_start == "setup":
-            message_out = json.dumps("ok")
+        if message_start == 'setup':
+            message_out = json.dumps('ok')
             writer.write(message_out.encode())
-            await self.send_message(json.dumps("ready"))
-        elif message_start == "error":
-            message_out = json.dumps("stop")
+            writer.close()
+            await self.send_message(json.dumps('ready'))
+        elif message_start == 'error':
+            message_out = json.dumps('stop')
             writer.write(message_out.encode())
+            writer.close()
             exit()
-        elif message_start == "stop":
-            print("stopping")
+        elif message_start == 'stop':
+            print('stopping')
             exit()
-        elif message_start == "wait":
-            message_out = json.dumps("ok")
+        elif message_start == 'wait':
+            message_out = json.dumps('ok')
             writer.write(message_out.encode())
-            await self.send_message(json.dumps("waiting"))
-        elif message_start == "test":
-            print("Test successful")
-        elif message_start == "capture":
-            message_out = json.dumps("ok")
+            writer.close()
+            await self.send_message(json.dumps('waiting'))
+        elif message_start == 'test':
+            print('Test successful')
+        elif message_start == 'capture':
+            message_out = json.dumps('ok')
             writer.write(message_out.encode())
+            writer.close()
             results = self.detector.recognise(self.source.getImage())
-            await self.send_message(json.dumps(("result", results)))
+            await self.send_message(json.dumps(('result', results)))
+
 
 
 async def start_main():
@@ -188,11 +197,12 @@ async def start_main():
 async def start_second():
     sc = Secondary('192.168.4.14', '192.168.4.1')
     await sc.open_server()
-    await sc.send_message(json.dumps("start"))
+    await sc.send_message(json.dumps('start'))
 
 
 async def test():
-    reader, writer = await asyncio.open_connection("192.168.4.1", 8888)
-    start_message = json.dumps("test")
+    reader, writer = await asyncio.open_connection('192.168.4.1', 8888)
+    start_message = json.dumps('test')
     writer.write(start_message.encode())
+    writer.close()
 
